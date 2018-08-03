@@ -44,13 +44,12 @@ export class Cafe {
    * Return a bunch of coffees and single charge representing the total cost
    **/
   buyCoffees(cc: CreditCard, n: number): [Coffee[], Charge] {
-    const cards: CreditCard[] = new Array(n).fill(cc);
-    const purchases = Array.from(cards, cc => this.buyCoffee(cc));
+    const purchases = new Array(n).fill(this.buyCoffee(cc));
     const [coffees, charges] = purchases.reduce(([coffees, charges], [coffee, charge]) => {
       coffees.push(coffee);
       charges.push(charge);
       return [coffees, charges];
     }, [new Array(), new Array()]) ;
-    return [coffees, charges.reduce((l, r) => l.combine(r))];
+    return [coffees, charges.reduce((l: Charge, r: Charge) => l.combine(r))];
   }
 }
