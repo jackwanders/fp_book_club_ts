@@ -106,22 +106,19 @@ a way to more easily represent the idea of purchasing 10 coffees. We just need t
 
 ```typescript
 buyCoffees(cc: CreditCard, n: number): [Coffee[], Charge] {
-  const cards: CreditCard[] = new Array(n).fill(cc);
-  const purchases = Array.from(cards, cc => this.buyCoffee(cc));
+  const purchases = new Array(n).fill(this.buyCoffee(cc));
 
   // this part is a bit ugly, but we're just splitting the array of
-  // [Coffee, Charge] tuples into one Coffee array and one Charge array
-  const [coffees, charges] = purchases.reduce(
-    ([coffees, charges], [coffee, charge]) => {
-        coffees.push(coffee);
-        charges.push(charge);
-        return [coffees, charges];
-    },
-    [new Array(), new Array()]
-  );
+  // [Coffee, Charge] tuples into one tuple of [Coffee[], Charge[]].
+  // this mimics the functionality of the unzip method found in Scala and Haskell
+  const [coffees, charges] = purchases.reduce(([coffees, charges], [coffee, charge]) => {
+    coffees.push(coffee);
+    charges.push(charge);
+    return [coffees, charges];
+  }, [new Array(), new Array()]) ;
 
-  // reduce the list of Charges to one by sequentially applying combine()
-  return [coffees, charges.reduce((l, r) => l.combine(r))];
+  // reduce the list of charges to one by sequentially applying combine
+  return [coffees, charges.reduce((l: Charge, r: Charge) => l.combine(r))];
 }
 ```
 
